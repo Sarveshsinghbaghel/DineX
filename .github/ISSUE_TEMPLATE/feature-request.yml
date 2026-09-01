@@ -1,0 +1,19 @@
+name: Feature request
+description: Propose a new capability aligned with the X10Think roadmap.
+title: '[Feature]: '
+labels: ['enhancement']
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: Describe the user or business problem.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Outline the preferred solution and constraints.
+    validations:
+      required: true

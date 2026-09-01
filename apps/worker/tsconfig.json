@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "target": "ES2022",
+    "outDir": "dist",
+    "rootDir": "src",
+    "types": ["node"],
+    "paths": {
+      "@x10think/configuration": ["../../packages/configuration/src/index.ts"],
+      "@x10think/constants": ["../../packages/constants/src/index.ts"],
+      "@x10think/utils": ["../../packages/utils/src/index.ts"],
+      "@x10think/validation": ["../../packages/validation/src/index.ts"]
+    }
+  },
+  "include": ["src"]
+}

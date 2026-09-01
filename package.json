@@ -1,0 +1,36 @@
+{
+  "name": "x10think-restaurant-management-system",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22.12.0",
+    "npm": ">=10.9.0"
+  },
+  "scripts": {
+    "prepare": "node scripts/setup-git-hooks.mjs",
+    "dev:web": "npm run dev --workspace @x10think/web",
+    "dev:api": "npm run dev --workspace @x10think/api",
+    "dev:worker": "npm run dev --workspace @x10think/worker",
+    "dev:docker": "docker compose -f infrastructure/compose/docker-compose.dev.yml up --build",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.34.0",
+    "eslint": "^9.34.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
+    "prettier": "^3.6.2",
+    "typescript-eslint": "^8.41.0"
+  },
+  "dependencies": {}
+}
