@@ -65,9 +65,10 @@ DineX/
    cp apps/web/.env.example apps/web/.env
    ```
 
-3. **Seed Database RBAC**:
+3. **Seed Database Demo Data & RBAC**:
    ```bash
-   npm run seed:rbac --workspace=@x10think/api
+   npm run seed:demo    # Seeds 7 demo accounts, restaurant, 2 branches, QR tables & orders
+   npm run reset:demo   # Resets and re-seeds development demo database
    ```
 
 4. **Start Development Servers**:

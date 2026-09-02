@@ -21,7 +21,9 @@
     "lint": "eslint . --max-warnings=0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "npm run test --workspaces --if-present"
+    "test": "npm run test --workspaces --if-present",
+    "seed:demo": "tsx apps/api/src/scripts/seed-demo-data.ts",
+    "reset:demo": "tsx apps/api/src/scripts/seed-demo-data.ts --reset"
   },
   "devDependencies": {
     "@eslint/js": "^9.34.0",
