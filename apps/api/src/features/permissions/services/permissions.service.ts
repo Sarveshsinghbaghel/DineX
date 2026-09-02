@@ -6,7 +6,11 @@ import { logAuditEvent } from '../../audit-logs/services/audit-log.service';
 import type { CreatePermissionInput, UpdatePermissionInput } from '@x10think/validation';
 import type { UserAuthContext } from '../../../middlewares/authorization.middleware';
 
-export async function listPermissions(filters?: { module?: string; scope?: string; status?: string }) {
+export async function listPermissions(filters?: {
+  module?: string;
+  scope?: string;
+  status?: string;
+}) {
   const query: Record<string, unknown> = {};
   if (filters?.module) query.module = filters.module;
   if (filters?.scope) query.scope = filters.scope;
@@ -73,7 +77,11 @@ export async function updatePermission(
   const permission = await getPermissionById(permissionId);
 
   if (permission.isSystem && input.status === 'inactive') {
-    throw new AppError('System permissions cannot be deactivated.', 403, 'SYSTEM_PERMISSION_PROTECTED');
+    throw new AppError(
+      'System permissions cannot be deactivated.',
+      403,
+      'SYSTEM_PERMISSION_PROTECTED',
+    );
   }
 
   if (input.description !== undefined) permission.description = input.description;

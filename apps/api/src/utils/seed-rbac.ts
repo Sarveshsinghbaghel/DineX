@@ -1,3 +1,4 @@
+import type mongoose from 'mongoose';
 import { PERMISSION_CATALOG, DEFAULT_ROLE_PERMISSIONS, SYSTEM_ROLES } from '@x10think/constants';
 import { Permission } from '../features/permissions/models/permission.model';
 import { Role } from '../features/roles/models/role.model';
@@ -18,7 +19,7 @@ export async function seedRbacData(tenantId?: string) {
       existing.description = pDef.description;
       existing.isSystem = true;
       await existing.save();
-      permMap.set(pDef.code, existing.id);
+      permMap.set(pDef.code, String(existing._id));
     } else {
       const created = await Permission.create({
         code: pDef.code,
@@ -29,7 +30,7 @@ export async function seedRbacData(tenantId?: string) {
         status: 'active',
         isSystem: true,
       });
-      permMap.set(pDef.code, created.id);
+      permMap.set(pDef.code, String(created._id));
     }
   }
 
@@ -52,7 +53,7 @@ export async function seedRbacData(tenantId?: string) {
 
     const existingRole = await Role.findOne({ code: roleCode, tenantId: tenantId ?? null });
     if (existingRole) {
-      existingRole.permissionIds = permissionObjectIds as any;
+      existingRole.permissionIds = permissionObjectIds as unknown as mongoose.Types.ObjectId[];
       existingRole.isSystem = true;
       existingRole.status = 'active';
       await existingRole.save();

@@ -9,7 +9,7 @@ dotenv.config({
 
 const envSchema = z.object({
   NODE_ENV: nodeEnvSchema,
-  APP_NAME: z.string().default('X10Think Worker'),
+  APP_NAME: z.string().default('DineX Worker'),
   APP_VERSION: z.string().default('0.1.0'),
   WORKER_PORT: portSchema.default(DEFAULT_PORTS.worker),
   WORKER_POLL_INTERVAL_MS: z.coerce.number().int().positive().default(30000),

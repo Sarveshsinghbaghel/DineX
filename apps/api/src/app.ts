@@ -10,6 +10,7 @@ import { errorHandler } from './errors/error-handler';
 import { notFoundMiddleware } from './middlewares/not-found.middleware';
 import { requestIdMiddleware } from './middlewares/request-id.middleware';
 import { requestLoggerMiddleware } from './middlewares/request-logger.middleware';
+import { nosqlSanitizeMiddleware } from './middlewares/nosql-sanitize.middleware';
 import { apiRouter } from './routes';
 import { sendSuccessResponse } from './utils/api-response';
 
@@ -37,6 +38,7 @@ app.use(
 app.use(compression());
 app.use(express.json({ limit: REQUEST_BODY_LIMIT }));
 app.use(express.urlencoded({ extended: true }));
+app.use(nosqlSanitizeMiddleware);
 app.use(requestLoggerMiddleware);
 
 app.get('/', (_request, response) => {

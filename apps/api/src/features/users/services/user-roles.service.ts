@@ -25,7 +25,11 @@ export async function assignRolesToUser(
       targetId: targetUserId,
       metadata: { reason: 'User attempted to assign roles to self' },
     });
-    throw new AppError('Users cannot modify their own roles.', 403, 'SELF_ROLE_MODIFICATION_FORBIDDEN');
+    throw new AppError(
+      'Users cannot modify their own roles.',
+      403,
+      'SELF_ROLE_MODIFICATION_FORBIDDEN',
+    );
   }
 
   const targetUser = await User.findById(targetUserId);
@@ -40,7 +44,11 @@ export async function assignRolesToUser(
   });
 
   if (rolesToAssign.length !== input.roleIds.length) {
-    throw new AppError('One or more specified role IDs do not exist or are inactive.', 400, 'INVALID_ROLES');
+    throw new AppError(
+      'One or more specified role IDs do not exist or are inactive.',
+      400,
+      'INVALID_ROLES',
+    );
   }
 
   // Check for privilege escalation: non-super_admin assigning super_admin role
@@ -56,7 +64,11 @@ export async function assignRolesToUser(
       targetId: targetUserId,
       metadata: { reason: 'Attempted to assign super_admin role without super_admin privileges' },
     });
-    throw new AppError('Only Super Admin can assign the Super Admin role.', 403, 'PRIVILEGE_ESCALATION_FORBIDDEN');
+    throw new AppError(
+      'Only Super Admin can assign the Super Admin role.',
+      403,
+      'PRIVILEGE_ESCALATION_FORBIDDEN',
+    );
   }
 
   const newRoleObjectIds = input.roleIds.map((id) => new mongoose.Types.ObjectId(id));
@@ -97,7 +109,11 @@ export async function removeRoleFromUser(
       targetId: targetUserId,
       metadata: { reason: 'User attempted to remove role from self' },
     });
-    throw new AppError('Users cannot modify their own roles.', 403, 'SELF_ROLE_MODIFICATION_FORBIDDEN');
+    throw new AppError(
+      'Users cannot modify their own roles.',
+      403,
+      'SELF_ROLE_MODIFICATION_FORBIDDEN',
+    );
   }
 
   const targetUser = await User.findById(targetUserId);

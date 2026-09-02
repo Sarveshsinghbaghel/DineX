@@ -4,7 +4,7 @@ export function AppLoadingPage() {
       <div className="text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.35em] text-ember">Loading</p>
         <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-ink">
-          Preparing the X10Think workspace
+          Preparing the DineX workspace
         </h1>
         <p className="mt-3 text-sm leading-6 text-slate-600">
           The frontend foundation is loading shared providers, routes, and data clients.

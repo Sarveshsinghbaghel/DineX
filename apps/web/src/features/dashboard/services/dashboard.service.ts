@@ -10,7 +10,8 @@ export class DashboardService {
     }
 
     return restaurantModules.filter((moduleItem) => {
-      const haystack = `${moduleItem.title} ${moduleItem.summary} ${moduleItem.metricValue}`.toLowerCase();
+      const haystack =
+        `${moduleItem.title} ${moduleItem.summary} ${moduleItem.metricValue}`.toLowerCase();
       return haystack.includes(normalizedSearch);
     });
   }

@@ -32,3 +32,24 @@ export async function sendAuthEmail(input: {
     text: `Complete this request: ${link}`,
   });
 }
+
+export async function sendEmail(input: {
+  to: string;
+  subject: string;
+  text: string;
+  html?: string;
+}) {
+  if (!transporter) {
+    logger.info('Generic email delivery skipped because SMTP is not configured', {
+      subject: input.subject,
+    });
+    return;
+  }
+  await transporter.sendMail({
+    from: env.EMAIL_FROM,
+    to: input.to,
+    subject: input.subject,
+    text: input.text,
+    html: input.html,
+  });
+}

@@ -8,10 +8,7 @@ export function errorHandler(
   response: Response,
   _next: NextFunction,
 ) {
-  const normalizedError =
-    error instanceof AppError
-      ? error
-      : new AppError('Internal server error');
+  const normalizedError = error instanceof AppError ? error : new AppError('Internal server error');
 
   return response.status(normalizedError.statusCode).json({
     success: false,

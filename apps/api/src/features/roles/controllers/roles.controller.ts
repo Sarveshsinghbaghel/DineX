@@ -3,7 +3,11 @@ import { sendSuccessResponse } from '../../../utils/api-response';
 import * as rolesService from '../services/roles.service';
 import { createRoleSchema, updateRoleSchema, assignPermissionsSchema } from '@x10think/validation';
 
-export async function listRoles(request: Request, response: Response, next: NextFunction): Promise<void> {
+export async function listRoles(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const roles = await rolesService.listRoles(request.user?.tenantId);
     sendSuccessResponse(response, {
@@ -15,7 +19,11 @@ export async function listRoles(request: Request, response: Response, next: Next
   }
 }
 
-export async function getRole(request: Request, response: Response, next: NextFunction): Promise<void> {
+export async function getRole(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const role = await rolesService.getRoleById(request.params.roleId as string);
     sendSuccessResponse(response, {
@@ -27,7 +35,11 @@ export async function getRole(request: Request, response: Response, next: NextFu
   }
 }
 
-export async function createRole(request: Request, response: Response, next: NextFunction): Promise<void> {
+export async function createRole(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const body = createRoleSchema.parse(request.body);
     const role = await rolesService.createRole(body, request.user!);
@@ -41,10 +53,18 @@ export async function createRole(request: Request, response: Response, next: Nex
   }
 }
 
-export async function updateRole(request: Request, response: Response, next: NextFunction): Promise<void> {
+export async function updateRole(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const body = updateRoleSchema.parse(request.body);
-    const role = await rolesService.updateRole(request.params.roleId as string, body, request.user!);
+    const role = await rolesService.updateRole(
+      request.params.roleId as string,
+      body,
+      request.user!,
+    );
     sendSuccessResponse(response, {
       message: 'Role updated successfully.',
       data: role,
@@ -54,7 +74,11 @@ export async function updateRole(request: Request, response: Response, next: Nex
   }
 }
 
-export async function deleteRole(request: Request, response: Response, next: NextFunction): Promise<void> {
+export async function deleteRole(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     await rolesService.deleteRole(request.params.roleId as string, request.user!);
     response.status(204).send();
@@ -63,7 +87,11 @@ export async function deleteRole(request: Request, response: Response, next: Nex
   }
 }
 
-export async function assignPermissions(request: Request, response: Response, next: NextFunction): Promise<void> {
+export async function assignPermissions(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const { permissionIds } = assignPermissionsSchema.parse(request.body);
     const role = await rolesService.assignPermissionsToRole(
@@ -80,7 +108,11 @@ export async function assignPermissions(request: Request, response: Response, ne
   }
 }
 
-export async function removePermission(request: Request, response: Response, next: NextFunction): Promise<void> {
+export async function removePermission(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const role = await rolesService.removePermissionFromRole(
       request.params.roleId as string,

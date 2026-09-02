@@ -1,3 +1,3 @@
 export const dashboardQueryKeys = {
-    modules: ['dashboard', 'modules'],
+  modules: ['dashboard', 'modules'],
 };

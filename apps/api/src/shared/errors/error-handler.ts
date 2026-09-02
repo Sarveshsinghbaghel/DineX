@@ -9,9 +9,7 @@ export function errorHandler(
   _next: NextFunction,
 ) {
   const normalizedError =
-    error instanceof AppError
-      ? error
-      : new AppError(error.message || 'Internal server error');
+    error instanceof AppError ? error : new AppError(error.message || 'Internal server error');
 
   return response.status(normalizedError.statusCode).json({
     success: false,

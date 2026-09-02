@@ -3,7 +3,11 @@ import { sendSuccessResponse } from '../../../utils/api-response';
 import * as permissionsService from '../services/permissions.service';
 import { createPermissionSchema, updatePermissionSchema } from '@x10think/validation';
 
-export async function listPermissions(request: Request, response: Response, next: NextFunction): Promise<void> {
+export async function listPermissions(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const { module, scope, status } = request.query;
     const permissions = await permissionsService.listPermissions({
@@ -20,9 +24,15 @@ export async function listPermissions(request: Request, response: Response, next
   }
 }
 
-export async function getPermission(request: Request, response: Response, next: NextFunction): Promise<void> {
+export async function getPermission(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
-    const permission = await permissionsService.getPermissionById(request.params.permissionId as string);
+    const permission = await permissionsService.getPermissionById(
+      request.params.permissionId as string,
+    );
     sendSuccessResponse(response, {
       message: 'Permission retrieved successfully.',
       data: permission,
@@ -32,9 +42,15 @@ export async function getPermission(request: Request, response: Response, next: 
   }
 }
 
-export async function getRolePermissions(request: Request, response: Response, next: NextFunction): Promise<void> {
+export async function getRolePermissions(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
-    const permissions = await permissionsService.getRolePermissions(request.params.roleId as string);
+    const permissions = await permissionsService.getRolePermissions(
+      request.params.roleId as string,
+    );
     sendSuccessResponse(response, {
       message: 'Role permissions retrieved successfully.',
       data: permissions,
@@ -44,7 +60,11 @@ export async function getRolePermissions(request: Request, response: Response, n
   }
 }
 
-export async function createPermission(request: Request, response: Response, next: NextFunction): Promise<void> {
+export async function createPermission(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const body = createPermissionSchema.parse(request.body);
     const permission = await permissionsService.createPermission(body, request.user!);
@@ -58,7 +78,11 @@ export async function createPermission(request: Request, response: Response, nex
   }
 }
 
-export async function updatePermission(request: Request, response: Response, next: NextFunction): Promise<void> {
+export async function updatePermission(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const body = updatePermissionSchema.parse(request.body);
     const permission = await permissionsService.updatePermission(

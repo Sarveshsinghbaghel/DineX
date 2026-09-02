@@ -9,15 +9,10 @@ export function AppShell({ children }: PropsWithChildren) {
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 lg:flex-row">
         <aside className="glass-panel w-full overflow-hidden lg:max-w-xs">
           <div className="border-b border-slate-200/70 px-6 py-6">
-            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-ember">
-              X10Think
-            </p>
-            <h1 className="mt-3 font-display text-3xl font-bold tracking-tight">
-              Restaurant OS
-            </h1>
+            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-ember">DineX</p>
+            <h1 className="mt-3 font-display text-3xl font-bold tracking-tight">Restaurant OS</h1>
             <p className="mt-3 text-sm leading-6 text-slate-600">
-              Command center for floor operations, kitchen flow, payments, inventory, and
-              reporting.
+              Command center for floor operations, kitchen flow, payments, inventory, and reporting.
             </p>
           </div>
 

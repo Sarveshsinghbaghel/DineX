@@ -4,18 +4,28 @@ export const roleCodeSchema = z
   .string()
   .min(2)
   .max(50)
-  .regex(/^[a-z0-9_]+$/, 'Code must be lowercase snake_case containing only letters, numbers, and underscores');
+  .regex(
+    /^[a-z0-9_]+$/,
+    'Code must be lowercase snake_case containing only letters, numbers, and underscores',
+  );
 
 export const permissionCodeSchema = z
   .string()
   .min(3)
   .max(100)
-  .regex(/^[a-z0-9_-]+\.[a-z0-9_.-]+$/, 'Permission code must follow resource.action format (e.g. users.read)');
+  .regex(
+    /^[a-z0-9_-]+\.[a-z0-9_.-]+$/,
+    'Permission code must follow resource.action format (e.g. users.read)',
+  );
 
 export const permissionScopeSchema = z.enum(['own', 'branch', 'restaurant', 'tenant', 'platform']);
 
 export const createRoleSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters').max(100, 'Name cannot exceed 100 characters').trim(),
+  name: z
+    .string()
+    .min(2, 'Name must be at least 2 characters')
+    .max(100, 'Name cannot exceed 100 characters')
+    .trim(),
   code: roleCodeSchema,
   description: z.string().max(500).optional(),
   permissionIds: z.array(z.string()).default([]),

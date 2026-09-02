@@ -12,7 +12,11 @@ rolesRouter.post('/', requirePermission('roles.manage'), rolesController.createR
 rolesRouter.patch('/:roleId', requirePermission('roles.manage'), rolesController.updateRole);
 rolesRouter.delete('/:roleId', requirePermission('roles.manage'), rolesController.deleteRole);
 
-rolesRouter.post('/:roleId/permissions', requirePermission('roles.manage'), rolesController.assignPermissions);
+rolesRouter.post(
+  '/:roleId/permissions',
+  requirePermission('roles.manage'),
+  rolesController.assignPermissions,
+);
 rolesRouter.delete(
   '/:roleId/permissions/:permissionId',
   requirePermission('roles.manage'),

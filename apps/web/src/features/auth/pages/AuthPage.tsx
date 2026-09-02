@@ -31,7 +31,7 @@ export function AuthPage() {
   return (
     <main className="mx-auto flex min-h-screen max-w-md items-center px-6 py-12">
       <section className="glass-panel w-full px-7 py-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-ember">X10Think</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-ember">DineX</p>
         <h1 className="mt-4 font-display text-4xl font-bold">
           {isRegister ? 'Create your account' : 'Welcome back'}
         </h1>

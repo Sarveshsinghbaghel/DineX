@@ -1,6 +1,10 @@
+process.env.JWT_ACCESS_SECRET = 'test_access_secret_key_32_characters_long';
+process.env.JWT_REFRESH_SECRET = 'test_refresh_secret_key_32_characters_long';
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { SYSTEM_ROLES, PERMISSION_CATALOG, DEFAULT_ROLE_PERMISSIONS } from '@x10think/constants';
+
 import {
   hasPermission,
   hasAnyPermission,
@@ -10,7 +14,7 @@ import {
   type UserAuthContext,
 } from '../middlewares/authorization.middleware';
 
-test('RBAC System Roles & Default Permissions', () => {
+void test('RBAC System Roles & Default Permissions', () => {
   // Verify permission catalog exists
   assert.ok(PERMISSION_CATALOG.length > 20);
 
@@ -18,7 +22,15 @@ test('RBAC System Roles & Default Permissions', () => {
 
   const roles = Object.values(SYSTEM_ROLES);
   assert.equal(roles.length, 7);
-  assert.deepEqual(roles, ['customer', 'waiter', 'chef', 'cashier', 'manager', 'admin', 'super_admin']);
+  assert.deepEqual(roles, [
+    'customer',
+    'waiter',
+    'chef',
+    'cashier',
+    'manager',
+    'admin',
+    'super_admin',
+  ]);
 
   // Test 2: Check Customer permissions
   const customerPerms = DEFAULT_ROLE_PERMISSIONS.customer;
@@ -59,7 +71,7 @@ test('RBAC System Roles & Default Permissions', () => {
   assert.ok(superAdminPerms.includes('system.doEverything'));
 });
 
-test('Authorization Middleware Helper Functions', () => {
+void test('Authorization Middleware Helper Functions', () => {
   const customerContext: UserAuthContext = {
     userId: 'user_123',
     sessionId: 'session_456',

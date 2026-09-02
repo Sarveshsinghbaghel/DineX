@@ -9,7 +9,8 @@ export function ForbiddenPage() {
         </div>
         <h1 className="text-2xl font-bold mb-2">Access Forbidden</h1>
         <p className="text-slate-400 mb-6 text-sm">
-          You do not have the required permissions or role privileges to view this resource. Contact your administrator if you believe this is an error.
+          You do not have the required permissions or role privileges to view this resource. Contact
+          your administrator if you believe this is an error.
         </p>
         <Link
           to="/"

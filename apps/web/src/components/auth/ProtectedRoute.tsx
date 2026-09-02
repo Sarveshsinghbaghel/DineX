@@ -39,9 +39,7 @@ export function ProtectedRoute({
 
   if (permissions && permissions.length > 0) {
     const hasPerms =
-      permissionMode === 'all'
-        ? hasAllPermissions(permissions)
-        : hasAnyPermission(permissions);
+      permissionMode === 'all' ? hasAllPermissions(permissions) : hasAnyPermission(permissions);
     if (!hasPerms) {
       return <ForbiddenPage />;
     }

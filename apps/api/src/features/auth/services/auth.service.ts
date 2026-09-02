@@ -80,10 +80,8 @@ function safeUser(user: UserDocument): SafeUser {
   } as unknown as SafeUser;
 }
 
-
-
 function tokenPayload(userId: string, sessionId: string, type: string) {
-  return { sub: userId, sid: sessionId, type };
+  return { sub: userId, sid: sessionId, type, jti: createOpaqueToken().token };
 }
 
 function issueAccessToken(user: UserDocument, sessionId: string) {
@@ -103,7 +101,7 @@ function refreshExpiry() {
 }
 
 export function setRefreshCookie(response: import('express').Response, token: string) {
-  response.cookie('x10think_refresh', token, {
+  response.cookie('dinex_refresh', token, {
     httpOnly: true,
     secure: env.NODE_ENV === 'production',
     sameSite: 'lax',
@@ -113,7 +111,7 @@ export function setRefreshCookie(response: import('express').Response, token: st
 }
 
 export function clearRefreshCookie(response: import('express').Response) {
-  response.clearCookie('x10think_refresh', {
+  response.clearCookie('dinex_refresh', {
     httpOnly: true,
     sameSite: 'lax',
     secure: env.NODE_ENV === 'production',
@@ -157,7 +155,7 @@ export async function register(input: {
   });
   await sendAuthEmail({
     to: user.email,
-    subject: 'Verify your X10Think email',
+    subject: 'Verify your DineX email',
     token: token.token,
     kind: 'verification',
   });
@@ -174,7 +172,7 @@ export async function login(input: { email: string; password: string }, request:
   if (!user) return invalid();
   if (user.lockUntil && user.lockUntil > new Date())
     throw new AppError('Account temporarily locked. Try again later.', 423, 'AUTH_ACCOUNT_LOCKED');
-  if (user.accountStatus === 'disabled') return invalid();
+  if (user.accountStatus !== 'active') return invalid();
   if (!(await bcrypt.compare(input.password, user.passwordHash))) {
     user.failedLoginAttempts += 1;
     if (user.failedLoginAttempts >= lockThreshold) {
@@ -225,7 +223,7 @@ export async function refresh(rawToken: string) {
     throw new AppError('Refresh token reuse detected.', 401, 'AUTH_REFRESH_REUSED');
   }
   const user = await User.findById(payload.sub).select('+passwordHash');
-  if (!user || user.accountStatus === 'disabled')
+  if (!user || user.accountStatus !== 'active')
     throw new AppError('Invalid session.', 401, 'AUTH_SESSION_REVOKED');
   const refreshToken = issueRefreshToken(user, session.id);
   session.refreshTokenHash = hashOpaqueToken(refreshToken);
@@ -236,7 +234,7 @@ export async function refresh(rawToken: string) {
 }
 
 export async function logout(sessionId: string) {
-  await Session.updateOne({ _id: sessionId, revokedAt: undefined }, { revokedAt: new Date() });
+  await Session.updateOne({ _id: sessionId }, { revokedAt: new Date() });
 }
 
 export async function logoutRefreshToken(rawToken: string) {
@@ -271,7 +269,6 @@ export async function currentUser(userId: string) {
   return buildSafeUserWithRoles(user);
 }
 
-
 async function issueOneTime(user: UserDocument, type: 'verification' | 'reset') {
   await OneTimeToken.deleteMany({ userId: user._id, type, usedAt: { $exists: false } });
   const token = createOpaqueToken();
@@ -283,7 +280,7 @@ async function issueOneTime(user: UserDocument, type: 'verification' | 'reset') 
   });
   await sendAuthEmail({
     to: user.email,
-    subject: type === 'reset' ? 'Reset your X10Think password' : 'Verify your X10Think email',
+    subject: type === 'reset' ? 'Reset your DineX password' : 'Verify your DineX email',
     token: token.token,
     kind: type,
   });

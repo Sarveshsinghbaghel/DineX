@@ -125,7 +125,11 @@ export async function deleteRole(roleId: string, actor: UserAuthContext) {
 
   const assignedUsersCount = await User.countDocuments({ roleIds: role._id });
   if (assignedUsersCount > 0) {
-    throw new AppError('Cannot delete role that is assigned to active users.', 409, 'ROLE_ASSIGNED');
+    throw new AppError(
+      'Cannot delete role that is assigned to active users.',
+      409,
+      'ROLE_ASSIGNED',
+    );
   }
 
   await Role.deleteOne({ _id: role._id });
@@ -140,7 +144,11 @@ export async function deleteRole(roleId: string, actor: UserAuthContext) {
   });
 }
 
-export async function assignPermissionsToRole(roleId: string, permissionIds: string[], actor: UserAuthContext) {
+export async function assignPermissionsToRole(
+  roleId: string,
+  permissionIds: string[],
+  actor: UserAuthContext,
+) {
   const role = await getRoleById(roleId);
 
   const validCount = await Permission.countDocuments({ _id: { $in: permissionIds } });
@@ -168,7 +176,11 @@ export async function assignPermissionsToRole(roleId: string, permissionIds: str
   return role.populate('permissionIds');
 }
 
-export async function removePermissionFromRole(roleId: string, permissionId: string, actor: UserAuthContext) {
+export async function removePermissionFromRole(
+  roleId: string,
+  permissionId: string,
+  actor: UserAuthContext,
+) {
   const role = await getRoleById(roleId);
 
   role.permissionIds = role.permissionIds.filter((id) => id.toString() !== permissionId);

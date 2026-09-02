@@ -13,7 +13,7 @@
     radial-gradient(circle at top left, rgba(246, 197, 111, 0.25), transparent 30%),
     radial-gradient(circle at top right, rgba(220, 93, 42, 0.18), transparent 24%),
     linear-gradient(180deg, #fbf7f1 0%, #efe6db 100%);
-  font-family: Manrope, "Segoe UI", sans-serif;
+  font-family: Manrope, 'Segoe UI', sans-serif;
 }
 
 :root[data-theme='dark'] {

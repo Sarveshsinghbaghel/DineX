@@ -1,11 +1,5 @@
 import type { PropsWithChildren } from 'react';
-import {
-  createContext,
-  startTransition,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { createContext, startTransition, useContext, useEffect, useState } from 'react';
 
 type ThemeMode = 'light' | 'dark';
 

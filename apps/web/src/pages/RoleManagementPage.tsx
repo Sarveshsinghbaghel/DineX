@@ -46,7 +46,9 @@ export function RoleManagementPage() {
       <header className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Roles & Permissions Management</h1>
-          <p className="text-sm text-slate-400">Configure access levels, system roles, and capability matrix.</p>
+          <p className="text-sm text-slate-400">
+            Configure access levels, system roles, and capability matrix.
+          </p>
         </div>
         <Can do="roles.manage">
           <button className="py-2 px-4 bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold rounded-lg text-sm transition-colors">
@@ -81,7 +83,9 @@ export function RoleManagementPage() {
                   </span>
                 )}
               </div>
-              <p className="text-xs text-slate-400 mt-1 line-clamp-1">{role.description || role.code}</p>
+              <p className="text-xs text-slate-400 mt-1 line-clamp-1">
+                {role.description || role.code}
+              </p>
             </button>
           ))}
         </div>
@@ -107,10 +111,14 @@ export function RoleManagementPage() {
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold text-slate-300 mb-3">Assigned Capabilities & Permissions</h3>
+                <h3 className="text-sm font-semibold text-slate-300 mb-3">
+                  Assigned Capabilities & Permissions
+                </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-96 overflow-y-auto pr-2">
                   {permissions.map((perm) => {
-                    const isAssigned = selectedRole.permissionIds?.includes(perm._id) || selectedRole.code === 'super_admin';
+                    const isAssigned =
+                      selectedRole.permissionIds?.includes(perm._id) ||
+                      selectedRole.code === 'super_admin';
                     return (
                       <div
                         key={perm._id}
@@ -129,7 +137,9 @@ export function RoleManagementPage() {
                         />
                         <div>
                           <div className="font-mono font-medium">{perm.code}</div>
-                          <div className="text-[11px] text-slate-400 mt-0.5">{perm.description}</div>
+                          <div className="text-[11px] text-slate-400 mt-0.5">
+                            {perm.description}
+                          </div>
                         </div>
                       </div>
                     );
@@ -138,7 +148,9 @@ export function RoleManagementPage() {
               </div>
             </>
           ) : (
-            <div className="text-center py-12 text-slate-400">Select a role to inspect permissions.</div>
+            <div className="text-center py-12 text-slate-400">
+              Select a role to inspect permissions.
+            </div>
           )}
         </div>
       </div>

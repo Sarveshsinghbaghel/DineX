@@ -11,15 +11,15 @@ Authorization is built directly on top of the authentication layer (`requireAuth
 
 The system implements 7 default system roles:
 
-| Role | Code | Description & Default Capabilities | Protected (isSystem) |
-| --- | --- | --- | --- |
-| **Customer** | `customer` | Access own profile, cart, reservations, orders, payments, reviews, loyalty, and menu browsing. | Yes |
-| **Waiter** | `waiter` | Access assigned tables/orders, reservations, create/update permitted orders, and customer requests. | Yes |
-| **Chef** | `chef` | Access kitchen orders display, update preparation states (accept, prepare, ready), and relevant menu data. | Yes |
-| **Cashier** | `cashier` | Access orders, bills/invoices, process payments, and authorized refunds. | Yes |
-| **Manager** | `manager` | Manage restaurant operations, menu/tables/reservations/orders, inventory/employees, reports, and analytics. | Yes |
-| **Admin** | `admin` | Manage users, roles/permissions (where authorized), restaurant config, menu/inventory/employees, audit logs. | Yes |
-| **Super Admin** | `super_admin` | Platform-wide access (`system.doEverything`), cross-tenant management, system configuration, and platform permissions. | Yes |
+| Role            | Code          | Description & Default Capabilities                                                                                     | Protected (isSystem) |
+| --------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| **Customer**    | `customer`    | Access own profile, cart, reservations, orders, payments, reviews, loyalty, and menu browsing.                         | Yes                  |
+| **Waiter**      | `waiter`      | Access assigned tables/orders, reservations, create/update permitted orders, and customer requests.                    | Yes                  |
+| **Chef**        | `chef`        | Access kitchen orders display, update preparation states (accept, prepare, ready), and relevant menu data.             | Yes                  |
+| **Cashier**     | `cashier`     | Access orders, bills/invoices, process payments, and authorized refunds.                                               | Yes                  |
+| **Manager**     | `manager`     | Manage restaurant operations, menu/tables/reservations/orders, inventory/employees, reports, and analytics.            | Yes                  |
+| **Admin**       | `admin`       | Manage users, roles/permissions (where authorized), restaurant config, menu/inventory/employees, audit logs.           | Yes                  |
+| **Super Admin** | `super_admin` | Platform-wide access (`system.doEverything`), cross-tenant management, system configuration, and platform permissions. | Yes                  |
 
 Custom roles can also be created dynamically by Admins and Super Admins. System roles (`isSystem: true`) are protected against renaming, deletion, or deactivation.
 

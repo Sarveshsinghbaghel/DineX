@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import type mongoose from 'mongoose';
 import { AppError } from '../errors/AppError';
-import { User } from '../features/auth/models/auth.models';
+import { User, Session } from '../features/auth/models/auth.models';
 import { verifyAccessToken } from '../features/auth/services/auth.service';
 import { Role } from '../features/roles/models/role.model';
 import { Permission } from '../features/permissions/models/permission.model';
@@ -16,19 +16,48 @@ export interface UserAuthContext {
   permissions: string[];
 }
 
-declare global {
-  namespace Express {
-    interface Request {
-      auth?: { userId: string; sessionId: string };
-      user?: UserAuthContext;
-    }
+interface LeanRoleDoc {
+  _id: { toString(): string };
+  code: string;
+  name: string;
+  isSystem: boolean;
+  permissionIds?: Array<{ toString(): string }>;
+}
+
+declare module 'express-serve-static-core' {
+  interface Request {
+    auth?: { userId: string; sessionId: string };
+    user?: UserAuthContext;
+  }
+}
+
+/**
+ * Optional authentication middleware: Populates request.user if token exists, but doesn't throw if omitted
+ */
+export async function optionalAuth(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
+  const header = request.get('authorization');
+  if (!header?.startsWith('Bearer ')) {
+    return next();
+  }
+  try {
+    await requireAuth(request, response, next);
+  } catch {
+    next();
   }
 }
 
 /**
  * Authenticates user and builds populated authorization context (roles & compiled permissions)
  */
-export async function requireAuth(request: Request, _response: Response, next: NextFunction): Promise<void> {
+export async function requireAuth(
+  request: Request,
+  _response: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const header = request.get('authorization');
     if (!header?.startsWith('Bearer ')) {
@@ -38,22 +67,29 @@ export async function requireAuth(request: Request, _response: Response, next: N
     const userId = payload.sub as string;
     const sessionId = payload.sid as string;
 
+    if (sessionId) {
+      const sessionDoc = await Session.findById(sessionId).lean();
+      if (!sessionDoc || sessionDoc.revokedAt || sessionDoc.expiresAt <= new Date()) {
+        throw new AppError('Session revoked or expired.', 401, 'AUTH_SESSION_REVOKED');
+      }
+    }
+
     const userDoc = await User.findById(userId).lean();
-    if (!userDoc || userDoc.accountStatus === 'disabled' || userDoc.accountStatus === 'locked') {
+    if (!userDoc || userDoc.accountStatus !== 'active') {
       throw new AppError('User account is invalid or suspended.', 401, 'AUTH_ACCOUNT_SUSPENDED');
     }
 
     // Populate active roles and permissions
-    let roleDocs: Array<any> = [];
+    let roleDocs: LeanRoleDoc[] = [];
     if (userDoc.roleIds && userDoc.roleIds.length > 0) {
       roleDocs = await Role.find({
         _id: { $in: userDoc.roleIds },
         status: 'active',
-      }).lean();
+      }).lean<LeanRoleDoc[]>();
     }
 
     const permissionIds = Array.from(
-      new Set(roleDocs.flatMap((r) => r.permissionIds?.map((id: any) => id.toString()) ?? [])),
+      new Set(roleDocs.flatMap((r) => r.permissionIds?.map((id) => id.toString()) ?? [])),
     );
 
     let permissionCodes: string[] = [];
@@ -66,7 +102,7 @@ export async function requireAuth(request: Request, _response: Response, next: N
     }
 
     const userRoles = roleDocs.map((r) => ({
-      _id: r._id.toString(),
+      _id: String(r._id),
       code: r.code,
       name: r.name,
       isSystem: r.isSystem,
@@ -135,7 +171,8 @@ export function requireRole(...requiredRoleCodes: string[]) {
 
       const userRoleCodes = request.user.roles.map((r) => r.code);
       const isSuperAdmin = userRoleCodes.includes('super_admin');
-      const hasRole = isSuperAdmin || requiredRoleCodes.some((code) => userRoleCodes.includes(code));
+      const hasRole =
+        isSuperAdmin || requiredRoleCodes.some((code) => userRoleCodes.includes(code));
 
       if (!hasRole) {
         await logAuditEvent({
@@ -172,7 +209,10 @@ export function hasPermission(user: UserAuthContext | undefined, permissionCode:
 /**
  * Checks if user has any of the specified permission codes
  */
-export function hasAnyPermission(user: UserAuthContext | undefined, permissionCodes: string[]): boolean {
+export function hasAnyPermission(
+  user: UserAuthContext | undefined,
+  permissionCodes: string[],
+): boolean {
   if (!user) return false;
   if (user.permissions.includes('system.doEverything')) return true;
   return permissionCodes.some((code) => user.permissions.includes(code));
@@ -181,7 +221,10 @@ export function hasAnyPermission(user: UserAuthContext | undefined, permissionCo
 /**
  * Checks if user has all of the specified permission codes
  */
-export function hasAllPermissions(user: UserAuthContext | undefined, permissionCodes: string[]): boolean {
+export function hasAllPermissions(
+  user: UserAuthContext | undefined,
+  permissionCodes: string[],
+): boolean {
   if (!user) return false;
   if (user.permissions.includes('system.doEverything')) return true;
   return permissionCodes.every((code) => user.permissions.includes(code));
@@ -214,15 +257,17 @@ export function checkResourceOwnershipAndScope(
   // Super admin accesses all scope
   if (user.permissions.includes('system.doEverything')) return true;
 
-  // If user owns the resource
-  if (resource.userId && isOwner(user, resource.userId)) return true;
-
   // Tenant boundary check
   if (resource.tenantId && user.tenantId && resource.tenantId !== user.tenantId) return false;
 
   // Branch boundary check (if branch ids assigned to staff)
   if (resource.branchId && user.branchIds && user.branchIds.length > 0) {
     if (!user.branchIds.includes(resource.branchId)) return false;
+  }
+
+  // User ownership check for user-owned resources
+  if (resource.userId) {
+    return isOwner(user, resource.userId);
   }
 
   return true;

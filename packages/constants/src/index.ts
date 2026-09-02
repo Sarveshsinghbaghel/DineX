@@ -1,4 +1,4 @@
-export const APP_NAME = 'X10Think Restaurant Management System';
+export const APP_NAME = 'DineX Restaurant Management System';
 export const API_PREFIX = '/api/v1';
 export const HEALTH_ROUTE = '/health';
 export const DEFAULT_PORTS = {
@@ -9,4 +9,3 @@ export const DEFAULT_PORTS = {
 export const REQUEST_BODY_LIMIT = '1mb';
 
 export * from './roles-permissions';
-

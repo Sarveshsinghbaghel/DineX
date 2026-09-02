@@ -24,7 +24,7 @@ export function DashboardOverviewPage() {
   return (
     <>
       <Helmet>
-        <title>Operations Overview | X10Think Restaurant Management System</title>
+        <title>Operations Overview | DineX Restaurant Management System</title>
       </Helmet>
 
       <section className="flex flex-col gap-6">
