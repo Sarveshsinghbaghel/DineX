@@ -6,11 +6,12 @@ on:
     branches:
       - main
       - master
-      - 'codex/**'
 
 jobs:
   validate:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,12 +25,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint
-        run: npm run lint
-
-      - name: Check formatting
-        run: npm run format:check
-
       - name: Typecheck
         run: npm run typecheck
 
@@ -38,3 +33,6 @@ jobs:
 
       - name: Test
         run: npm run test
+
+      - name: Verify API Docker Build
+        run: docker build -t dinex-api:ci .

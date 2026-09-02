@@ -5,10 +5,13 @@ import { connectDatabase, disconnectDatabase } from './config/database';
 import { env } from './config/env';
 import { logger } from './config/logger';
 
+import { initSocketServer, getSocketServer } from './lib/socket.service';
+
 const server = createServer(app);
 
 async function bootstrap() {
   await connectDatabase();
+  initSocketServer(server);
 
   server.listen(env.PORT, () => {
     logger.info('API server listening', {
@@ -21,6 +24,12 @@ async function bootstrap() {
 
 async function shutdown(signal: NodeJS.Signals) {
   logger.info('Received shutdown signal', { signal });
+
+  const socketIo = getSocketServer();
+  if (socketIo) {
+    logger.info('Closing Socket.IO connections');
+    socketIo.close();
+  }
 
   await new Promise<void>((resolve, reject) => {
     server.close((error) => {

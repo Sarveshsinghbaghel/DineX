@@ -41,6 +41,46 @@ app.use(express.urlencoded({ extended: true }));
 app.use(nosqlSanitizeMiddleware);
 app.use(requestLoggerMiddleware);
 
+import mongoose from 'mongoose';
+
+app.get('/health', (_request, response) => {
+  sendSuccessResponse(response, {
+    message: `${APP_NAME} service is healthy.`,
+    data: {
+      status: 'pass',
+      service: env.APP_NAME,
+      version: env.APP_VERSION,
+      uptimeSeconds: Math.floor(process.uptime()),
+      timestamp: new Date().toISOString(),
+    },
+  });
+});
+
+app.get('/readiness', (_request, response) => {
+  const isDbConnected = mongoose.connection.readyState === 1;
+  if (isDbConnected) {
+    return sendSuccessResponse(response, {
+      message: `${APP_NAME} service is ready.`,
+      data: {
+        status: 'ready',
+        database: 'connected',
+      },
+    });
+  }
+
+  response.status(503).json({
+    success: false,
+    error: {
+      code: 'SERVICE_UNAVAILABLE',
+      message: 'Database connection is not ready.',
+      data: {
+        status: 'unready',
+        database: 'disconnected',
+      },
+    },
+  });
+});
+
 app.get('/', (_request, response) => {
   sendSuccessResponse(response, {
     message: `${APP_NAME} API foundation is running.`,
