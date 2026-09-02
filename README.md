@@ -1,103 +1,113 @@
-# X10Think Restaurant Management System
+# DineX — Multi-Tenant Enterprise Restaurant Management System
 
-X10Think is an enterprise restaurant operations platform being built as a documentation-first monorepo. This phase establishes the repository architecture, shared packages, development environment, CI foundation, Docker development workflow, and minimal application bootstraps for the web app, API, and background worker.
+**DineX** is a full-stack, multi-tenant enterprise restaurant operations platform built as an npm workspace monorepo. It powers multi-branch operations, real-time table management, QR self-ordering, online delivery fulfillment, inventory control, employee attendance, customer engagement, AI recommendations, analytics, and spreadsheet/PDF report exports.
 
-## Project Overview
+---
 
-- `apps/web` contains the React, Vite, TypeScript, and Tailwind frontend foundation.
-- `apps/api` contains the Express, TypeScript, MongoDB-ready backend foundation with `/api/v1/health`.
-- `apps/worker` contains the background worker runtime reserved for future async processing.
-- `packages/*` contains shared constants, configuration, types, validation helpers, utilities, and reserved UI package space.
-- `docs/` contains the approved architecture references plus structured guidance for security, deployment, testing, and development workflow.
+## Key Features
 
-## Architecture
+- **Multi-Tenant & Multi-Branch Architecture**: Strict data isolation by `tenantId` and `branchId` with hierarchical configuration precedence (`Branch → Restaurant → System Default`).
+- **Dine-In QR Ordering System**: Public mobile menu, table QR code generation/regeneration, server-authoritative checkout, zero-trust price calculation, and real-time status tracking.
+- **Online Delivery & Order Fulfillment**: Address CRUD, delivery fee threshold calculation, staff driver assignment dashboard, rider mobile portal, and customer live delivery tracking.
+- **Role-Based Access Control (RBAC)**: 7 pre-configured system roles (`Customer`, `Waiter`, `Chef`, `Cashier`, `Manager`, `Admin`, `Super Admin`) with granular permission enforcement on every route.
+- **Real-Time Socket.IO Updates**: Scoped room broadcasts (`user:id`, `branch:id`) for kitchen notifications, order status changes, and driver updates.
+- **Inventory & Procurement**: Ingredient stock management, automatic order deduction, stock adjustment logs, purchase order management, and low-stock alerts.
+- **Analytics & Report Generation**: Date-range drilldowns, revenue/order analytics, PDF/XLSX/CSV export generators with formula injection protection.
+- **Personalized Recommendations**: Rule-based recommendation engine for upsells, cross-sells, and cold-start fallback.
 
-The repository follows a monorepo design with explicit separation between user-facing applications, shared packages, documentation, automation scripts, and infrastructure assets. Frontend code never talks directly to the database. Backend routing stays thin and delegates behavior to services and repositories. Shared packages are reserved for cross-application contracts so future modules can grow without copy-paste drift.
+---
 
 ## Technology Stack
 
-- Frontend: React 19, Vite 7, TypeScript, Tailwind CSS, TanStack Query, React Router
-- Backend: Express 5, TypeScript, Zod, Winston, Mongoose
-- Worker: TypeScript, TSX, Winston, Zod
-- Tooling: npm workspaces, ESLint, Prettier, EditorConfig, GitHub Actions, Docker Compose
+- **Frontend (`apps/web`)**: React 19, Vite 7, TypeScript, Tailwind CSS, TanStack Query v5, React Router v7, React Hook Form, Zod.
+- **Backend (`apps/api`)**: Node.js 22, Express 5, TypeScript, Mongoose 8, Socket.IO, Helmet, Rate Limiter, Winston.
+- **Worker (`apps/worker`)**: Node.js 22, TypeScript background job runtime.
+- **Shared Packages (`packages/*`)**: `@x10think/constants`, `@x10think/types`, `@x10think/validation`, `@x10think/ui`, `@x10think/utils`, `@x10think/configuration`.
+- **Tooling & CI/CD**: npm workspaces, ESLint, Prettier, Docker multi-stage builds, GitHub Actions, Vercel, Render.
 
-## Repository Structure
+---
+
+## Monorepo Architecture
 
 ```text
-apps/
-  api/
-  web/
-  worker/
-packages/
-  configuration/
-  constants/
-  types/
-  ui/
-  utils/
-  validation/
-docs/
-infrastructure/
-scripts/
-.github/
+DineX/
+├── apps/
+│   ├── api/                  # Express 5 REST API & Socket.IO server
+│   ├── web/                  # React 19 single-page application
+│   └── worker/               # Background task processing
+├── packages/
+│   ├── configuration/        # Application environment tokens
+│   ├── constants/            # Roles, permissions, status enums
+│   ├── types/                # Shared TypeScript contracts
+│   ├── ui/                   # Design system components
+│   ├── utils/                # Utility functions
+│   └── validation/           # Zod validation schemas
+├── docs/                     # Architecture, API, and DB specifications
+├── infrastructure/           # Dockerfiles & compose manifests
+└── TESTING.md / DEPLOYMENT.md
 ```
 
-## Prerequisites
+---
 
-- Node.js `>=22.12.0`
-- npm `>=10.9.0`
-- Docker Desktop or compatible Docker runtime for containerized development
-- Local MongoDB or access to MongoDB Atlas for API and worker data connectivity
+## Quick Start & Setup
 
-## Installation
+1. **Clone & Install Dependencies**:
+   ```bash
+   git clone https://github.com/DineX/DineX.git
+   cd DineX
+   npm install
+   ```
 
-1. Run `npm install`.
-2. Copy the environment templates:
-   - `cp .env.example .env`
-   - `cp apps/api/.env.example apps/api/.env`
-   - `cp apps/web/.env.example apps/web/.env`
-   - `cp apps/worker/.env.example apps/worker/.env`
-3. Optionally run `npm run prepare` if Git hooks were not installed automatically.
+2. **Configure Environment Files**:
+   ```bash
+   cp .env.example .env
+   cp apps/api/.env.example apps/api/.env
+   cp apps/web/.env.example apps/web/.env
+   ```
 
-## Environment Setup
+3. **Seed Database RBAC**:
+   ```bash
+   npm run seed:rbac --workspace=@x10think/api
+   ```
 
-Environment templates are intentionally secret-free. Use them to define local and CI-safe defaults only. Required variable documentation lives in [docs/deployment/environment-variables.md](/Users/sarveshsinghbaghel/Documents/Resturent/docs/deployment/environment-variables.md).
+4. **Start Development Servers**:
+   ```bash
+   npm run dev:api    # Starts API on http://localhost:4000
+   npm run dev:web    # Starts Web UI on http://localhost:5173
+   ```
 
-## Development Commands
+---
 
-- `npm run dev:web` starts the frontend foundation.
-- `npm run dev:api` starts the API foundation.
-- `npm run dev:worker` starts the background worker foundation.
-- `npm run dev:docker` starts the Docker Compose development stack.
-- `npm run build` builds all workspaces.
-- `npm run typecheck` runs strict TypeScript checks across the monorepo.
-- `npm run lint` runs ESLint across the monorepo.
-- `npm run format:check` verifies formatting with Prettier.
-- `npm run test` runs placeholder workspace test commands.
+## Quality & Testing Commands
 
-## Docker Usage
+DineX features 16 automated integration and unit test suites (71 tests):
 
-Use `npm run dev:docker` or `docker compose -f infrastructure/compose/docker-compose.dev.yml up --build`. The development stack includes the web app, API, worker, and a local MongoDB service. Docker assets live under [infrastructure/docker](/Users/sarveshsinghbaghel/Documents/Resturent/infrastructure/docker) and [infrastructure/compose](/Users/sarveshsinghbaghel/Documents/Resturent/infrastructure/compose).
+```bash
+# Run strict TypeScript type checks across all workspaces
+npm run typecheck
 
-## Testing, Linting, and Build Verification
+# Run full test suite (API + Web)
+npm test
 
-This foundation phase treats type checking, linting, formatting, and successful builds as the baseline quality gate. Future business modules must extend that gate with real unit, integration, and end-to-end tests.
+# Build production bundles
+npm run build
+```
 
-## Contribution Rules
+---
 
-Follow [CONTRIBUTING.md](/Users/sarveshsinghbaghel/Documents/Resturent/CONTRIBUTING.md), the approved documents in `docs/`, and the repository branching and commit guidance in the guides directory before opening pull requests.
+## Security & Deployment
 
-## Git Workflow
+- **Security Overview**: Detailed in [`SECURITY.md`](file:///Users/sarveshsinghbaghel/Documents/Resturent/SECURITY.md) covering session revocation, NoSQL operator sanitizer, rate limiting, and RBAC matrix.
+- **Production Deployment**: Detailed in [`DEPLOYMENT.md`](file:///Users/sarveshsinghbaghel/Documents/Resturent/DEPLOYMENT.md) covering Vercel (Frontend), Render (Backend container), and MongoDB Atlas setup.
+- **Developer Onboarding**: Detailed in [`DEVELOPER_ONBOARDING.md`](file:///Users/sarveshsinghbaghel/Documents/Resturent/DEVELOPER_ONBOARDING.md).
 
-- Branch prefix: `codex/`
-- Commit style: conventional commits
-- Pull requests must include validation evidence and architecture impact summary
+---
 
-## Documentation Links
+## Documentation Index
 
-- [Software Requirements Specification](/Users/sarveshsinghbaghel/Documents/Resturent/docs/software-requirements-specification.md)
-- [Software Design Document](/Users/sarveshsinghbaghel/Documents/Resturent/docs/software-design-document.md)
-- [Database Design Document](/Users/sarveshsinghbaghel/Documents/Resturent/docs/database-design-document.md)
-- [API Design Document](/Users/sarveshsinghbaghel/Documents/Resturent/docs/api-design-document.md)
-- [UI/UX Design Blueprint](/Users/sarveshsinghbaghel/Documents/Resturent/docs/ui-ux-design-system-and-experience-blueprint.md)
-- [Branching Strategy Guide](/Users/sarveshsinghbaghel/Documents/Resturent/docs/guides/branching-strategy.md)
-- [Commit Conventions Guide](/Users/sarveshsinghbaghel/Documents/Resturent/docs/guides/commit-conventions.md)
+- [System Architecture Reference](file:///Users/sarveshsinghbaghel/Documents/Resturent/docs/architecture/system-architecture.md)
+- [Database Models Reference](file:///Users/sarveshsinghbaghel/Documents/Resturent/docs/database/models-schema-reference.md)
+- [API Endpoints Reference](file:///Users/sarveshsinghbaghel/Documents/Resturent/docs/api/endpoints-reference.md)
+- [Security & RBAC Matrix](file:///Users/sarveshsinghbaghel/Documents/Resturent/SECURITY.md)
+- [Testing Architecture Guide](file:///Users/sarveshsinghbaghel/Documents/Resturent/TESTING.md)
+- [Production Deployment Guide](file:///Users/sarveshsinghbaghel/Documents/Resturent/DEPLOYMENT.md)

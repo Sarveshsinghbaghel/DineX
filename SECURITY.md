@@ -24,6 +24,34 @@ This document details the security model, authorization controls, tenant boundar
 
 ---
 
+## 3. System RBAC Permission Matrix
+
+| Module / Permission | Customer | Waiter | Chef | Cashier | Manager | Admin | Super Admin |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| `users.read` | ❌ | ❌ | ❌ | ❌ | 👁️ | ✅ | ✅ |
+| `users.manage` | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
+| `restaurants.view` | 👁️ | 👁️ | 👁️ | 👁️ | 👁️ | ✅ | ✅ |
+| `restaurants.manage` | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
+| `branches.view` | 👁️ | 👁️ | 👁️ | 👁️ | 👁️ | ✅ | ✅ |
+| `branches.manage` | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
+| `menu.read` | 👁️ | 👁️ | 👁️ | 👁️ | 👁️ | ✅ | ✅ |
+| `menu.manage` | ❌ | ❌ | ❌ | ❌ | ✏️ | ✅ | ✅ |
+| `tables.read` | 👁️ | 👁️ | 👁️ | 👁️ | 👁️ | ✅ | ✅ |
+| `tables.manage` | ❌ | ✏️ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| `orders.read` | 👁️ (own) | 👁️ | 👁️ | 👁️ | 👁️ | ✅ | ✅ |
+| `orders.create` | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| `orders.update` | ❌ | ✏️ | ✏️ | ✏️ | ✅ | ✅ | ✅ |
+| `inventory.view` | ❌ | ❌ | 👁️ | ❌ | 👁️ | ✅ | ✅ |
+| `inventory.manage` | ❌ | ❌ | ✏️ | ❌ | ✅ | ✅ | ✅ |
+| `delivery.view` | 👁️ (own) | ❌ | ❌ | ❌ | 👁️ | ✅ | ✅ |
+| `delivery.manage` | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| `delivery.fulfill` | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| `analytics.read` | ❌ | ❌ | ❌ | ❌ | 👁️ | ✅ | ✅ |
+| `reports.read` | ❌ | ❌ | ❌ | ❌ | 👁️ | ✅ | ✅ |
+| `reports.export` | ❌ | ❌ | ❌ | ❌ | 📥 | ✅ | ✅ |
+
+---
+
 ## 3. Input & Query Security
 
 - **NoSQL Operator Sanitization**: Express request body, query parameters, and route parameters are recursively sanitized by `nosqlSanitizeMiddleware`. Any property key beginning with `$` (such as `$gt`, `$ne`, `$where`, `$regex`) or containing dot notation injection is automatically stripped before reaching controllers or services.

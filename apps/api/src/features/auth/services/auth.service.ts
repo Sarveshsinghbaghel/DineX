@@ -55,7 +55,11 @@ export async function buildSafeUserWithRoles(user: UserDocument): Promise<SafeUs
     }));
 
     const permIds = Array.from(
-      new Set(roleDocs.flatMap((r) => r.permissionIds?.map((id: any) => id.toString()) ?? [])),
+      new Set(
+        roleDocs.flatMap((r) =>
+          r.permissionIds?.map((id: { toString(): string }) => id.toString()) ?? [],
+        ),
+      ),
     );
     if (permIds.length > 0) {
       const permDocs = await Permission.find({ _id: { $in: permIds }, status: 'active' }).lean();
@@ -86,14 +90,14 @@ function tokenPayload(userId: string, sessionId: string, type: string) {
 
 function issueAccessToken(user: UserDocument, sessionId: string) {
   return jwt.sign(tokenPayload(user.id, sessionId, ACCESS_TOKEN), env.JWT_ACCESS_SECRET, {
-    expiresIn: env.ACCESS_TOKEN_TTL as jwt.SignOptions['expiresIn'],
-  });
+    expiresIn: env.ACCESS_TOKEN_TTL,
+  } as jwt.SignOptions);
 }
 
 function issueRefreshToken(user: UserDocument, sessionId: string) {
   return jwt.sign(tokenPayload(user.id, sessionId, REFRESH_TOKEN), env.JWT_REFRESH_SECRET, {
-    expiresIn: `${env.REFRESH_TOKEN_TTL_DAYS}d` as jwt.SignOptions['expiresIn'],
-  });
+    expiresIn: `${env.REFRESH_TOKEN_TTL_DAYS}d`,
+  } as jwt.SignOptions);
 }
 
 function refreshExpiry() {
