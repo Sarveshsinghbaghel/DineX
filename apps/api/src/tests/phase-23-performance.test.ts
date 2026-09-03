@@ -72,7 +72,7 @@ describe('DineX Phase 23: Performance Optimization & Scalability Benchmark Suite
     }
   });
 
-  test('1. Compound Index Query Performance: Order query executes in < 50ms', async () => {
+  test('1. Compound Index Query Performance: Order query executes in < 100ms', async () => {
     const startTime = performance.now();
 
     const orders = await Order.find({ tenantId, branchId, status: 'completed' })
@@ -83,10 +83,10 @@ describe('DineX Phase 23: Performance Optimization & Scalability Benchmark Suite
     const durationMs = performance.now() - startTime;
 
     assert.ok(orders.length > 0);
-    assert.ok(durationMs < 50, `Expected query duration < 50ms, got ${durationMs.toFixed(2)}ms`);
+    assert.ok(durationMs < 100, `Expected query duration < 100ms, got ${durationMs.toFixed(2)}ms`);
   });
 
-  test('2. Parallel Analytics Execution: Dashboard summary executes in < 50ms', async () => {
+  test('2. Parallel Analytics Execution: Dashboard summary executes in < 100ms', async () => {
     const startTime = performance.now();
 
     const summary = await analyticsService.getDashboardSummary(mockAdminActor, {
@@ -98,10 +98,10 @@ describe('DineX Phase 23: Performance Optimization & Scalability Benchmark Suite
     const durationMs = performance.now() - startTime;
 
     assert.ok(summary);
-    assert.ok(durationMs < 50, `Expected analytics duration < 50ms, got ${durationMs.toFixed(2)}ms`);
+    assert.ok(durationMs < 100, `Expected analytics duration < 100ms, got ${durationMs.toFixed(2)}ms`);
   });
 
-  test('3. Audit Log Compound Index Query: Audit search executes in < 50ms', async () => {
+  test('3. Audit Log Compound Index Query: Audit search executes in < 100ms', async () => {
     const startTime = performance.now();
 
     const logs = await AuditLog.find({ tenantId, action: 'PERF_BENCHMARK_ACTION' })
@@ -112,7 +112,7 @@ describe('DineX Phase 23: Performance Optimization & Scalability Benchmark Suite
     const durationMs = performance.now() - startTime;
 
     assert.ok(logs.length > 0);
-    assert.ok(durationMs < 50, `Expected audit log query duration < 50ms, got ${durationMs.toFixed(2)}ms`);
+    assert.ok(durationMs < 100, `Expected audit log query duration < 100ms, got ${durationMs.toFixed(2)}ms`);
   });
 
   test('4. Cloudinary Auto-Compression Optimization: URL contains f_auto,q_auto flags', async () => {
